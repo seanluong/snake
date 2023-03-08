@@ -1,4 +1,3 @@
-
 export type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
 export interface Coordinate {
@@ -13,5 +12,9 @@ export interface Snake {
 
 export interface GameState {
     snake: Snake;
+    rowCount: number;
+    columnCount: number;
 }
 
+export type Action =
+ | { type: 'move' };

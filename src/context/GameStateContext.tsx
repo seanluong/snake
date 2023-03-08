@@ -1,32 +1,88 @@
-import { createContext, PropsWithChildren, useContext, useState } from "react";
-import { Coordinate, Direction, GameState, Snake } from "../types";
+import { createContext, PropsWithChildren, useContext, useReducer, useState } from "react";
+import { Action, Coordinate, Direction, GameState, Snake } from "../types";
 
 interface GameStateContextType {
     gameState: GameState;
-    updateDirection: (direction: Direction) => void;
+    dispatch: (action: Action) => void;
 }
 
+const SNAKE = {
+    body: [
+        { rowIndex: 0, columnIndex: 0 } as Coordinate
+    ],
+    direction: "DOWN",
+} as Snake;
+
 const GAME_STATE = {
-    snake: {
-        body: [
-            { rowIndex: 0, columnIndex: 0 } as Coordinate
-        ],
-        direction: "DOWN",
-    } as Snake,
+    snake: SNAKE,
+    rowCount: 10,
+    columnCount: 10,
   } as GameState;
 
 const GameStateContext = createContext<GameStateContextType>({
     gameState: GAME_STATE,
-    updateDirection: () => {},
+    dispatch: () => {},
 })
 
+const directionToOffset = (direction: Direction): number[] => {
+    switch (direction) {
+        case "UP":
+            return [-1, 0];
+        case "DOWN":
+            return [1, 0];
+        case "LEFT":
+            return [0, -1];
+        case "RIGHT":
+            return [0, 1];
+        default:
+            return [0, 0];
+    }
+}
+
+const isCoordinateInBoard = (coordinate: Coordinate, rowCount: number, columnCount: number) => {
+    const { rowIndex, columnIndex } = coordinate;
+    return 0 <= rowIndex && rowIndex < rowCount && 0 <= columnIndex && columnIndex <= columnCount;
+}
+
+const reducer = (gameState: GameState, action: Action): GameState => {
+    const { snake, rowCount, columnCount } = gameState;
+    const { body, direction } = snake;
+    switch (action.type) {
+        case "move":
+            const [dr, dc] = directionToOffset(direction);
+
+            return {
+                ...gameState,
+                snake: {
+                    ...snake,
+                    body: body.map(({ rowIndex, columnIndex }) => {
+                        const nextRowIndex = rowIndex + dr;
+                        const nextColumnIndex = columnIndex + dc;
+                        const coor = {
+                            rowIndex: nextRowIndex,
+                            columnIndex: nextColumnIndex,
+                        }
+                        if (isCoordinateInBoard(coor, rowCount, columnCount)) {
+                            return coor;
+                        }
+                        return {
+                            rowIndex, columnIndex
+                        }
+                    })
+                }
+            }
+        default:
+            break;
+    }
+    return gameState;
+}
+
 export const GameStateProvider = ({ children }: PropsWithChildren) => {
-    const [direction, setDirection] = useState<Direction>("DOWN");
-    const updateDirection = (direction: Direction) => setDirection(direction);
+    const [gameState, dispatch] = useReducer(reducer, GAME_STATE);
     return (
         <GameStateContext.Provider value={{
-            gameState: GAME_STATE,
-            updateDirection,
+            gameState,
+            dispatch,
         }}>
             {children}
         </GameStateContext.Provider>

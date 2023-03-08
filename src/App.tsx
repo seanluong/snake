@@ -1,9 +1,23 @@
 import { Stack } from '@mui/system'
+import { useEffect } from 'react';
 import { GameBoard } from './components/GameBoard'
+import { useGameStateContext } from './context/GameStateContext';
 
 function App() {
-  const rowCount = 10;
-  const columnCount = 10;
+  const tickDuraction = 500;
+
+  const { gameState, dispatch } = useGameStateContext();
+  const { rowCount, columnCount } = gameState;
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      dispatch({
+        type: "move"
+      });
+    }, tickDuraction);
+
+    return () => clearInterval(id)
+  }, []);
 
   return (
     <Stack sx={{
