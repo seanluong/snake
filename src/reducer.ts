@@ -21,27 +21,31 @@ const isCoordinateInBoard = (coordinate: Coordinate, rowCount: number, columnCou
     return 0 <= rowIndex && rowIndex < rowCount && 0 <= columnIndex && columnIndex < columnCount;
 }
 
+const isCoordinateInCollection = (coordinate: Coordinate, collection: Coordinate[]) => 
+    collection.some((element) => sameCoordinate(coordinate, element))
+
 const snakeHead = ({ body }: Snake) => body[body.length-1];
 
 const snakeBeforeHead = ({ body }: Snake) => body[body.length-2];
 
 const spawnApples = (apples: Coordinate[], snakeBody: Coordinate[], rowCount: number, columnCount: number): Coordinate[] => {
     if (apples.length > 0) {
-        return [...apples];
+        return apples;
     }
     
     let rowIndex: number;
     let columnIndex: number;
+    let apple: Coordinate;
     while (true) {
         rowIndex = Math.floor(Math.random() * rowCount);
         columnIndex = Math.floor(Math.random() * columnCount);
-        if (snakeBody.some((coordinate) => sameCoordinate(coordinate, { rowIndex, columnIndex }))) {
+        apple = { rowIndex, columnIndex } as Coordinate;
+        if (isCoordinateInCollection(apple, snakeBody) || isCoordinateInCollection(apple, apples)) {
             continue;
         } else {
             break;
         }
     }
-    const apple = { rowIndex, columnIndex } as Coordinate;
     return [apple];
 }
 
@@ -56,22 +60,16 @@ const tick = (gameState: GameState): GameState => {
         rowIndex: head.rowIndex + dr,
         columnIndex: head.columnIndex + dc,
     }
-    let body = [];
-    let apples = [] as Coordinate[];
-    if (isCoordinateInBoard(coor, rowCount, columnCount)) {
-        let consumedApple = false;
-        for (let apple of gameState.apples) {
-            if (sameCoordinate(coor, apple)) {
-                consumedApple = true;
-            } else {
-                apples.push(apple);
-            }
+    let body = [...snake.body];
+    let apples = [...gameState.apples];
+    if (isCoordinateInBoard(coor, rowCount, columnCount) && !isCoordinateInCollection(coor, snake.body)) {
+        if (isCoordinateInCollection(coor, apples)) {
+            body.push(coor);
+            apples = apples.filter((coordinate) => !sameCoordinate(coor, coordinate))
+        } else {
+            body = snake.body.slice(1);
+            body.push(coor);
         }
-        body = consumedApple ? [...snake.body] : snake.body.slice(1);
-        body.push(coor);
-    } else {
-        body = [...snake.body];
-        apples = [...gameState.apples];
     }
 
     return {
