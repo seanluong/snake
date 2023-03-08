@@ -25,7 +25,30 @@ const snakeHead = ({ body }: Snake) => body[body.length-1];
 
 const snakeBeforeHead = ({ body }: Snake) => body[body.length-2];
 
-const nextBody = (gameState: GameState): Coordinate[] => {
+const spawnApples = (apples: Coordinate[], snakeBody: Coordinate[], rowCount: number, columnCount: number): Coordinate[] => {
+    if (apples.length > 0) {
+        return [...apples];
+    }
+    
+    let rowIndex: number;
+    let columnIndex: number;
+    while (true) {
+        rowIndex = Math.floor(Math.random() * rowCount);
+        columnIndex = Math.floor(Math.random() * columnCount);
+        if (snakeBody.some((coordinate) => sameCoordinate(coordinate, { rowIndex, columnIndex }))) {
+            continue;
+        } else {
+            break;
+        }
+    }
+    const apple = { rowIndex, columnIndex } as Coordinate;
+    return [apple];
+}
+
+const sameCoordinate = (lhs: Coordinate, rhs: Coordinate) =>
+    lhs.columnIndex === rhs.columnIndex && lhs.rowIndex === rhs.rowIndex;
+
+const tick = (gameState: GameState): GameState => {
     const { snake, rowCount, columnCount } = gameState;
     const head = snakeHead(snake);
     const [dr, dc] = directionToOffset(snake.direction);
@@ -34,16 +57,35 @@ const nextBody = (gameState: GameState): Coordinate[] => {
         columnIndex: head.columnIndex + dc,
     }
     let body = [];
+    let apples = [] as Coordinate[];
     if (isCoordinateInBoard(coor, rowCount, columnCount)) {
-        body = snake.body.slice(1);
+        let consumedApple = false;
+        for (let apple of gameState.apples) {
+            if (sameCoordinate(coor, apple)) {
+                consumedApple = true;
+            } else {
+                apples.push(apple);
+            }
+        }
+        body = consumedApple ? [...snake.body] : snake.body.slice(1);
         body.push(coor);
     } else {
-        body = [...snake.body]
+        body = [...snake.body];
+        apples = [...gameState.apples];
     }
-    return body;
+
+    return {
+        ...gameState,
+        snake: {
+            ...snake,
+            body,
+        },
+        apples: spawnApples(apples, body, rowCount, columnCount),
+    };
 }
 
-const nextDirection = ({ snake }: GameState, payload: { direction: Direction }): Direction => {
+const changeDirection = (gameState: GameState, payload: { direction: Direction }): GameState => {
+    const { snake } = gameState;
     const head = snakeHead(snake)
     const beforeHead = snakeBeforeHead(snake);
     let { direction } = payload;
@@ -53,43 +95,24 @@ const nextDirection = ({ snake }: GameState, payload: { direction: Direction }):
         columnIndex: head.columnIndex + dc,
     }
     if (nextCoor.rowIndex === beforeHead.rowIndex && nextCoor.columnIndex === beforeHead.columnIndex) {
-        return snake.direction;
+        direction = snake.direction;
     }
-    return direction;
-}
-
-const spawnApples = ({ apples, rowCount, columnCount }: GameState): Coordinate[] => {
-    if (apples.length > 0) {
-        return [...apples];
-    }
-    
-    const rowIndex = Math.floor(Math.random() * rowCount);
-    const columnIndex = Math.floor(Math.random() * columnCount);
-    const apple = { rowIndex, columnIndex } as Coordinate;
-    return [apple];
+    return {
+        ...gameState,
+        snake: {
+            ...snake,
+            direction,
+        }
+    };
 }
 
 export const reducer = (gameState: GameState, action: Action): GameState => {
     const { snake } = gameState;
     switch (action.type) {
         case "tick":
-            const apples = spawnApples(gameState);
-            return {
-                ...gameState,
-                snake: {
-                    ...snake,
-                    body: nextBody(gameState),
-                },
-                apples,
-            }
+            return tick(gameState);
         case "changeDirection":
-            return {
-                ...gameState,
-                snake: {
-                    ...snake,
-                    direction: nextDirection(gameState, action.payload)
-                }
-            }
+            return changeDirection(gameState, action.payload);
         default:
             break;
     }
