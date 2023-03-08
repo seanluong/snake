@@ -26,7 +26,7 @@ const Row = ({ values, rowIndex }: RowProps) => {
 
     const bgcolor = (snake: Snake, rowIndex: number, columnIndex: number) => {
         if (inSnakeBody(snake, rowIndex, columnIndex)) {
-            return "cyan";
+            return "purple";
         }
         if (isDarkCell(rowIndex, columnIndex)) {
             return "yellow";
