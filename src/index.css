@@ -1,0 +1,10 @@
+body {
+  background-color: lavender;
+  margin: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+}
