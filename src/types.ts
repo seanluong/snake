@@ -17,4 +17,5 @@ export interface GameState {
 }
 
 export type Action =
- | { type: 'move' };
+ | { type: 'move' }
+ | { type: 'changeDirection', payload: { direction: Direction } };

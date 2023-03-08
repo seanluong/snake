@@ -10,8 +10,7 @@ interface GameStateContextType {
 const SNAKE = {
     body: [
         { rowIndex: 0, columnIndex: 0 } as Coordinate,
-        { rowIndex: 0, columnIndex: 1 } as Coordinate,
-        { rowIndex: 0, columnIndex: 2 } as Coordinate
+        { rowIndex: 0, columnIndex: 1 } as Coordinate
     ],
     direction: "DOWN",
 } as Snake;

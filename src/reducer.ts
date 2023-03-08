@@ -1,4 +1,4 @@
-import { Action, Coordinate, Direction, GameState } from "./types";
+import { Action, Coordinate, Direction, GameState, Snake } from "./types";
 
 
 const directionToOffset = (direction: Direction): number[] => {
@@ -18,15 +18,20 @@ const directionToOffset = (direction: Direction): number[] => {
 
 const isCoordinateInBoard = (coordinate: Coordinate, rowCount: number, columnCount: number) => {
     const { rowIndex, columnIndex } = coordinate;
-    return 0 <= rowIndex && rowIndex < rowCount && 0 <= columnIndex && columnIndex <= columnCount;
+    return 0 <= rowIndex && rowIndex < rowCount && 0 <= columnIndex && columnIndex < columnCount;
 }
+
+const snakeHead = ({ body }: Snake) => body[body.length-1];
+
+const snakeBeforeHead = ({ body }: Snake) => body[body.length-2];
 
 export const reducer = (gameState: GameState, action: Action): GameState => {
     const { snake, rowCount, columnCount } = gameState;
+    const head = snakeHead(snake);
+    const beforeHead = snakeBeforeHead(snake);
     switch (action.type) {
         case "move":
             const [dr, dc] = directionToOffset(snake.direction);
-            const head = snake.body[snake.body.length-1];
             const coor = {
                 rowIndex: head.rowIndex + dr,
                 columnIndex: head.columnIndex + dc,
@@ -43,6 +48,23 @@ export const reducer = (gameState: GameState, action: Action): GameState => {
                 snake: {
                     ...snake,
                     body,
+                }
+            }
+        case "changeDirection":
+            let nextDirection = action.payload.direction;
+            const [nextDirR, nextDirC] = directionToOffset(nextDirection);
+            const nextCoor = {
+                rowIndex: head.rowIndex + nextDirR,
+                columnIndex: head.columnIndex + nextDirC,
+            }
+            if (nextCoor.rowIndex === beforeHead.rowIndex && nextCoor.columnIndex === beforeHead.columnIndex) {
+                nextDirection = snake.direction;
+            }
+            return {
+                ...gameState,
+                snake: {
+                    ...snake,
+                    direction: nextDirection
                 }
             }
         default:
