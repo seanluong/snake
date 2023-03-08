@@ -2,7 +2,7 @@ import Paper from '@mui/material/Paper';
 import { Stack } from '@mui/system';
 import times from 'lodash/times';
 import { useGameStateContext } from '../context/GameStateContext';
-import { Snake } from '../types';
+import { Coordinate, GameState, Snake } from '../types';
 
 export interface GameBoardProps {
     rowCount: number;
@@ -16,17 +16,23 @@ interface RowProps {
 
 const isDarkCell = (rowIndex: number, columnIndex: number) => (rowIndex + columnIndex) % 2 === 0;
 
-const inSnakeBody = (snake: Snake, rowIndex: number, columnIndex: number) =>
+const isSnakeBody = (rowIndex: number, columnIndex: number, snake: Snake) =>
     snake.body.some((coordinate) => coordinate.rowIndex === rowIndex && coordinate.columnIndex === columnIndex);
+
+const isApple = (rowIndex: number, columnIndex: number, apples: Coordinate[]) =>
+    apples.some((coordinate) => coordinate.rowIndex === rowIndex && coordinate.columnIndex === columnIndex);
 
 const Row = ({ values, rowIndex }: RowProps) => {
     const { gameState } = useGameStateContext();
 
-    const { snake } = gameState;
+    const { snake, apples } = gameState;
 
-    const bgcolor = (snake: Snake, rowIndex: number, columnIndex: number) => {
-        if (inSnakeBody(snake, rowIndex, columnIndex)) {
+    const bgcolor = (gameState: GameState, rowIndex: number, columnIndex: number) => {
+        if (isSnakeBody(rowIndex, columnIndex, snake)) {
             return "purple";
+        }
+        if (isApple(rowIndex, columnIndex, apples)) {
+            return "red";
         }
         if (isDarkCell(rowIndex, columnIndex)) {
             return "yellow";
@@ -44,7 +50,7 @@ const Row = ({ values, rowIndex }: RowProps) => {
                 return <Paper key={`column-${columnIndex}`}
                             elevation={2}
                             sx={{
-                                bgcolor: bgcolor(snake, rowIndex, columnIndex),
+                                bgcolor: bgcolor(gameState, rowIndex, columnIndex),
                                 borderRadius: 0,
                                 width: "2rem",
                             }}>

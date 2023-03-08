@@ -12,7 +12,7 @@ function App() {
   useEffect(() => {
     const id = setInterval(() => {
       dispatch({
-        type: "move"
+        type: "tick"
       });
     }, tickDuraction);
 

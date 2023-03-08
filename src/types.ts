@@ -15,8 +15,9 @@ export interface GameState {
     rowCount: number;
     columnCount: number;
     tickDuraction: number;
+    apples: Coordinate[];
 }
 
 export type Action =
- | { type: 'move' }
+ | { type: 'tick' }
  | { type: 'changeDirection', payload: { direction: Direction } };

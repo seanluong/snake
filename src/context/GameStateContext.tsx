@@ -20,6 +20,7 @@ const GAME_STATE = {
     rowCount: 10,
     columnCount: 10,
     tickDuraction: 250,
+    apples: [] as Coordinate[],
   } as GameState;
 
 const GameStateContext = createContext<GameStateContextType>({
