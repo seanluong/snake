@@ -12,13 +12,14 @@ const SNAKE = {
         { rowIndex: 0, columnIndex: 0 } as Coordinate,
         { rowIndex: 0, columnIndex: 1 } as Coordinate
     ],
-    direction: "DOWN",
+    direction: "RIGHT",
 } as Snake;
 
 const GAME_STATE = {
     snake: SNAKE,
     rowCount: 10,
     columnCount: 10,
+    tickDuraction: 250,
   } as GameState;
 
 const GameStateContext = createContext<GameStateContextType>({

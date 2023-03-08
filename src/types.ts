@@ -14,6 +14,7 @@ export interface GameState {
     snake: Snake;
     rowCount: number;
     columnCount: number;
+    tickDuraction: number;
 }
 
 export type Action =

@@ -5,10 +5,8 @@ import { useGameStateContext } from './context/GameStateContext';
 import { Direction } from './types';
 
 function App() {
-  const tickDuraction = 200;
-
   const { gameState, dispatch } = useGameStateContext();
-  const { rowCount, columnCount } = gameState;
+  const { rowCount, columnCount, tickDuraction } = gameState;
   const documentRef = useRef<Document>(document);
 
   useEffect(() => {
