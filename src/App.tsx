@@ -7,6 +7,7 @@ import { useGameStateContext } from './context/GameStateContext';
 import AddIcon from '@mui/icons-material/Add';
 import { Direction } from './types';
 import { ControlButtons } from './components/ControlButtons';
+import { HelpCard } from './components/HelpCard';
 
 function App() {
   const { gameState, dispatch } = useGameStateContext();
@@ -86,6 +87,7 @@ function App() {
           <AddIcon />
       </Fab>
       <ControlButtons />
+      <HelpCard />
     </Stack>
   )
 }
