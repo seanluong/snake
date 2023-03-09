@@ -1,6 +1,6 @@
 import { createContext, PropsWithChildren, useContext, useReducer, useState } from "react";
 import { reducer } from "../reducer";
-import { Action, Coordinate, Direction, GameState, Snake } from "../types";
+import { Action, Coordinate, GameState, Snake, SnakePart } from "../types";
 
 interface GameStateContextType {
     gameState: GameState;
@@ -9,8 +9,14 @@ interface GameStateContextType {
 
 const SNAKE = {
     body: [
-        { rowIndex: 0, columnIndex: 0 } as Coordinate,
-        { rowIndex: 0, columnIndex: 1 } as Coordinate
+        {
+            coordinate: { rowIndex: 0, columnIndex: 0 },
+            type: "HORIZONTAL"
+        } as SnakePart,
+        {
+            coordinate: { rowIndex: 0, columnIndex: 1},
+            type: "HORIZONTAL" 
+        } as SnakePart
     ],
     direction: "RIGHT",
 } as Snake;

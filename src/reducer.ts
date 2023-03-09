@@ -1,4 +1,4 @@
-import { Action, Coordinate, Direction, GameState, Snake } from "./types";
+import { Action, Coordinate, Direction, GameState, MovementType, Snake, SnakePart } from "./types";
 
 
 const directionToOffset = (direction: Direction): number[] => {
@@ -52,25 +52,70 @@ const spawnApples = (apples: Coordinate[], snakeBody: Coordinate[], rowCount: nu
 const sameCoordinate = (lhs: Coordinate, rhs: Coordinate) =>
     lhs.columnIndex === rhs.columnIndex && lhs.rowIndex === rhs.rowIndex;
 
+const partType = (before: SnakePart, after: SnakePart): MovementType => {
+    const rowOffset = before.coordinate.rowIndex - after.coordinate.rowIndex;
+    const columnOffset = before.coordinate.columnIndex - after.coordinate.columnIndex;
+    if (rowOffset === 0) {
+        return "HORIZONTAL";
+    } else if (columnOffset === 0) {
+        return "VERTICAL";
+    } else if (rowOffset * columnOffset > 0) {
+        return "TOP_LEFT_BOTTOM_RIGHT";
+    } else {
+        // rowOffset * columnOffset <>> 0
+        return "BOTTOM_LEFT_TOP_RIGHT";
+    }
+}
+
+const augmentSnakeBody = (parts: SnakePart[]) => {
+    parts.forEach((part, index) => {
+        let before: SnakePart;
+        let after: SnakePart;
+        if (index === 0) {
+            // TAIL
+            before = parts[index+1];
+            part.type = partType(before, part);
+            part.position = "TAIL";
+        } else if (index === parts.length - 1) {
+            // HEAD
+            after = parts[index-1];
+            part.type = partType(part, after);
+            part.position = "HEAD";
+        } else {
+            before = parts[index+1];
+            after = parts[index-1];
+            part.type = partType(before, after);
+            part.position = "MIDDLE";
+        }
+    });
+}
+
 const tick = (gameState: GameState): GameState => {
     const { snake, rowCount, columnCount } = gameState;
     const head = snakeHead(snake);
     const [dr, dc] = directionToOffset(snake.direction);
     const coor = {
-        rowIndex: head.rowIndex + dr,
-        columnIndex: head.columnIndex + dc,
+        rowIndex: head.coordinate.rowIndex + dr,
+        columnIndex: head.coordinate.columnIndex + dc,
     }
     let body = [...snake.body];
     let apples = [...gameState.apples];
-    if (isCoordinateInBoard(coor, rowCount, columnCount) && !isCoordinateInCollection(coor, snake.body)) {
+    const snakeCoors = snake.body.map((cell) => cell.coordinate);
+    if (isCoordinateInBoard(coor, rowCount, columnCount) && !isCoordinateInCollection(coor, snakeCoors)) {
         if (isCoordinateInCollection(coor, apples)) {
-            body.push(coor);
+            body.push({
+                coordinate: coor,
+            });
             apples = apples.filter((coordinate) => !sameCoordinate(coor, coordinate))
         } else {
             body = snake.body.slice(1);
-            body.push(coor);
+            body.push({
+                coordinate: coor,
+            });
         }
     }
+
+    augmentSnakeBody(body);
 
     return {
         ...gameState,
@@ -78,7 +123,7 @@ const tick = (gameState: GameState): GameState => {
             ...snake,
             body,
         },
-        apples: spawnApples(apples, body, rowCount, columnCount),
+        apples: spawnApples(apples, snakeCoors, rowCount, columnCount),
     };
 }
 
@@ -89,10 +134,10 @@ const changeDirection = (gameState: GameState, payload: { direction: Direction }
     let { direction } = payload;
     const [dr, dc] = directionToOffset(direction);
     const nextCoor = {
-        rowIndex: head.rowIndex + dr,
-        columnIndex: head.columnIndex + dc,
+        rowIndex: head.coordinate.rowIndex + dr,
+        columnIndex: head.coordinate.columnIndex + dc,
     }
-    if (nextCoor.rowIndex === beforeHead.rowIndex && nextCoor.columnIndex === beforeHead.columnIndex) {
+    if (nextCoor.rowIndex === beforeHead.coordinate.rowIndex && nextCoor.columnIndex === beforeHead.coordinate.columnIndex) {
         direction = snake.direction;
     }
     return {
