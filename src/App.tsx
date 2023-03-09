@@ -37,7 +37,7 @@ function App() {
   }, [documentRef, status]);
 
   const handleKeyDowned = (event: KeyboardEvent) => {
-    switch (event.key) {
+    switch (event.code) {
       case "ArrowUp":
       case "ArrowDown":
       case "ArrowLeft":
@@ -50,9 +50,13 @@ function App() {
           }
         })
         return;
-      case "n":
+      case "KeyN":
         dispatch({
           type: "newGame"
+        });
+      case "KeyP":
+        dispatch({
+          type: "togglePausePlayGame"
         });
       default:
         break;

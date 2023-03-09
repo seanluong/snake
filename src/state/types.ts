@@ -3,9 +3,10 @@ import { Coordinate, Direction, Snake } from "../types";
 type Action =
  | { type: 'tick' }
  | { type: 'changeDirection', payload: { direction: Direction } }
- | { type: 'newGame' };
+ | { type: 'newGame' }
+ | { type: 'togglePausePlayGame' };
 
-type GameStatus = "NEW" | "ONGOING" | "FINISHED";
+type GameStatus = "NEW" | "ONGOING" | "PAUSED" | "FINISHED";
 
 interface ScoreInfo {
     currentScore: number;

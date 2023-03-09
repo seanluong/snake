@@ -70,10 +70,8 @@ const augmentSnakeBody = (parts: SnakePart[]) => {
 
 const tick = (gameState: GameState): GameState => {
     const { snake, rowCount, columnCount, scoreInfo, status } = gameState;
-    if (status === "FINISHED") {
-        return {
-            ...gameState
-        };
+    if (["FINISHED", "PAUSED"].includes(status)) {
+        return gameState;
     }
 
     const head = snakeHead(snake);
@@ -131,6 +129,10 @@ const tick = (gameState: GameState): GameState => {
 
 const changeDirection = (gameState: GameState, payload: { direction: Direction }): GameState => {
     const { snake, status } = gameState;
+    if (["FINISHED", "PAUSED"].includes(status)) {
+        return gameState;
+    }
+    
     const head = snakeHead(snake)
     const beforeHead = snakeBeforeHead(snake);
     let { direction } = payload;
@@ -163,6 +165,14 @@ const newGame = (gameState: GameState): GameState => {
     };
 }
 
+const togglePausePlayGame = (gameState: GameState): GameState => {
+    const status = gameState.status;
+    return {
+        ...gameState,
+        status: (status === "PAUSED" ? "ONGOING" : (status === "ONGOING" ? "PAUSED" : status)),
+    };
+}
+
 export const reducer = (gameState: GameState, action: Action): GameState => {
     const state = cloneDeep(gameState);
     switch (action.type) {
@@ -172,6 +182,8 @@ export const reducer = (gameState: GameState, action: Action): GameState => {
             return changeDirection(state, action.payload);
         case "newGame":
             return newGame(state);
+        case "togglePausePlayGame":
+            return togglePausePlayGame(state);
         default:
             break;
     }
