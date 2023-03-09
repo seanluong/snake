@@ -37,4 +37,5 @@ export interface GameState {
 
 export type Action =
  | { type: 'tick' }
- | { type: 'changeDirection', payload: { direction: Direction } };
+ | { type: 'changeDirection', payload: { direction: Direction } }
+ | { type: 'newGame' };

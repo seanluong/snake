@@ -7,7 +7,7 @@ interface GameStateContextType {
     dispatch: (action: Action) => void;
 }
 
-const SNAKE = {
+export const SNAKE = {
     body: [
         {
             coordinate: { rowIndex: 0, columnIndex: 0 },
@@ -31,7 +31,7 @@ const GAME_STATE = {
         currentScore: 0,
     },
     status: "ONGOING",
-  } as GameState;
+} as GameState;
 
 const GameStateContext = createContext<GameStateContextType>({
     gameState: GAME_STATE,

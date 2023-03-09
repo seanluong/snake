@@ -15,7 +15,7 @@ export const ScordCard = () => {
                 Score: {currentScore}
             </Typography>
             {
-                bestScore &&
+                Number.isInteger(bestScore) &&
                 <Typography variant="h6">
                     Best: {bestScore}
                 </Typography>

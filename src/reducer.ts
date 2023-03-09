@@ -1,3 +1,4 @@
+import { SNAKE } from "./context/GameStateContext";
 import { Action, Coordinate, Direction, GameState, MovementType, Snake, SnakePart } from "./types";
 
 
@@ -91,7 +92,13 @@ const augmentSnakeBody = (parts: SnakePart[]) => {
 }
 
 const tick = (gameState: GameState): GameState => {
-    const { snake, rowCount, columnCount, scoreInfo } = gameState;
+    const { snake, rowCount, columnCount, scoreInfo, status } = gameState;
+    if (status === "FINISHED") {
+        return {
+            ...gameState
+        };
+    }
+
     const head = snakeHead(snake);
     const [dr, dc] = directionToOffset(snake.direction);
     const coor = {
@@ -167,6 +174,19 @@ const changeDirection = (gameState: GameState, payload: { direction: Direction }
     };
 }
 
+const newGame = (gameState: GameState): GameState => {
+    return {
+        ...gameState,
+        snake: SNAKE,
+        apples: [] as Coordinate[],
+        scoreInfo: {
+            ...gameState.scoreInfo,
+            currentScore: 0,
+        },
+        status: "ONGOING",
+    };
+}
+
 export const reducer = (gameState: GameState, action: Action): GameState => {
     const { snake } = gameState;
     switch (action.type) {
@@ -174,6 +194,8 @@ export const reducer = (gameState: GameState, action: Action): GameState => {
             return tick(gameState);
         case "changeDirection":
             return changeDirection(gameState, action.payload);
+        case "newGame":
+            return newGame(gameState);
         default:
             break;
     }

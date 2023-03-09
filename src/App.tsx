@@ -1,8 +1,10 @@
+import { Fab } from '@mui/material';
 import { Stack } from '@mui/system'
 import { useEffect, useRef } from 'react';
 import { GameBoard } from './components/GameBoard'
 import { ScordCard } from './components/ScordCard';
 import { useGameStateContext } from './context/GameStateContext';
+import AddIcon from '@mui/icons-material/Add';
 import { Direction } from './types';
 
 function App() {
@@ -42,17 +44,26 @@ function App() {
         break;
     }
   }
+  const handleNewGameClicked = (event: React.MouseEvent) => {
+    dispatch({
+      type: "newGame",
+    });
+  }
 
   useEffect(() => {
     if (documentRef.current) {
       const document = documentRef.current;
-      document.addEventListener('keydown', handleKeyDowned);
+      if (status === "FINISHED") {
+        document.removeEventListener('keydown', handleKeyDowned)
+        return;
+      }
 
+      document.addEventListener('keydown', handleKeyDowned);
       return () => {
         document.removeEventListener('keydown', handleKeyDowned)
       }
     }
-  }, [documentRef])
+  }, [documentRef, status])
 
   return (
     <Stack spacing={2} sx={{
@@ -60,6 +71,17 @@ function App() {
     }}>
       <ScordCard />
       <GameBoard />
+      <Fab aria-label="add"
+          size="medium"
+          onClick={handleNewGameClicked}
+          sx={{
+              bgcolor: "pink",
+              position: "absolute",
+              bottom: "2rem",
+              right: "2rem",
+          }}>
+          <AddIcon />
+      </Fab>
     </Stack>
   )
 }
