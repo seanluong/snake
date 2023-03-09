@@ -153,7 +153,7 @@ const tick = (gameState: GameState): GameState => {
 }
 
 const changeDirection = (gameState: GameState, payload: { direction: Direction }): GameState => {
-    const { snake } = gameState;
+    const { snake, status } = gameState;
     const head = snakeHead(snake)
     const beforeHead = snakeBeforeHead(snake);
     let { direction } = payload;
@@ -171,7 +171,7 @@ const changeDirection = (gameState: GameState, payload: { direction: Direction }
             ...snake,
             direction,
         },
-        status: "ONGOING",
+        status: status === "NEW" ? "ONGOING" : status,
     };
 }
 

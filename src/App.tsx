@@ -28,11 +28,6 @@ function App() {
   useEffect(() => {
     if (documentRef.current) {
       const document = documentRef.current;
-      if (status === "FINISHED") {
-        document.removeEventListener('keydown', handleKeyDowned)
-        return;
-      }
-
       document.addEventListener('keydown', handleKeyDowned);
       return () => {
         document.removeEventListener('keydown', handleKeyDowned)
