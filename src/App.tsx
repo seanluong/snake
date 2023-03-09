@@ -15,7 +15,7 @@ function App() {
   const { tickDuraction, status } = gameState;
   const documentRef = useRef<Document>(document);
 
-  let interval: number;
+  let interval: number | undefined;
   useEffect(() => {
     if (status === "ONGOING" && !interval) {
       interval = setInterval(() => {
