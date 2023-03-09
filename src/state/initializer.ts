@@ -1,5 +1,4 @@
-import { directionToOffset, isCoordinateInBoard } from "../helpers/boardHelper";
-import { Coordinate, Direction, Snake } from "../types";
+import { Coordinate, Snake } from "../types";
 import { GameSettings, GameState } from "./types";
 
 const GAME_SETTINGS: GameSettings = {

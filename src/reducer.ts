@@ -1,71 +1,16 @@
-import { Coordinate, Direction, MovementType, Snake, SnakePart } from "./types";
+import { Direction } from "./types";
 import cloneDeep from 'lodash/cloneDeep';
-import { Action, GameState } from "./state/types";
-import { directionToOffset, isCoordinateInBoard, isCoordinateInCollection, sameCoordinate } from "./helpers/boardHelper";
+import { Action, GameState, ScoreInfo } from "./state/types";
+import { sameCoordinate } from "./helpers/boardHelper";
 import { newGameState } from "./state/initializer";
+import { augmentSnakeBody, eatApple, eatSelf, hitWall, nextSnakeHead, snakeBeforeHead, spawnApples } from "./helpers/snakeHelpers";
 
-
-const snakeHead = ({ body }: Snake) => body[body.length-1];
-
-const snakeBeforeHead = ({ body }: Snake) => body[body.length-2];
-
-const spawnApples = (apples: Coordinate[], snakeBody: Coordinate[], rowCount: number, columnCount: number): Coordinate[] => {
-    if (apples.length > 0) {
-        return apples;
+const syncScoreInfo = (scoreInfo: ScoreInfo): ScoreInfo => {
+    let { currentScore, bestScore } = scoreInfo;
+    if (!bestScore || bestScore < currentScore) {
+        bestScore = currentScore;
     }
-    
-    let rowIndex: number;
-    let columnIndex: number;
-    let apple: Coordinate;
-    while (true) {
-        rowIndex = Math.floor(Math.random() * rowCount);
-        columnIndex = Math.floor(Math.random() * columnCount);
-        apple = { rowIndex, columnIndex } as Coordinate;
-        if (isCoordinateInCollection(apple, snakeBody) || isCoordinateInCollection(apple, apples)) {
-            continue;
-        } else {
-            break;
-        }
-    }
-    return [apple];
-}
-
-const partType = (before: SnakePart, after: SnakePart): MovementType => {
-    const rowOffset = before.coordinate.rowIndex - after.coordinate.rowIndex;
-    const columnOffset = before.coordinate.columnIndex - after.coordinate.columnIndex;
-    if (rowOffset === 0) {
-        return "HORIZONTAL";
-    } else if (columnOffset === 0) {
-        return "VERTICAL";
-    } else if (rowOffset * columnOffset > 0) {
-        return "TOP_LEFT_BOTTOM_RIGHT";
-    } else {
-        // rowOffset * columnOffset < 0
-        return "BOTTOM_LEFT_TOP_RIGHT";
-    }
-}
-
-const augmentSnakeBody = (parts: SnakePart[]) => {
-    parts.forEach((part, index) => {
-        let before: SnakePart;
-        let after: SnakePart;
-        if (index === 0) {
-            // TAIL
-            before = parts[index+1];
-            part.type = partType(before, part);
-            part.position = "TAIL";
-        } else if (index === parts.length - 1) {
-            // HEAD
-            after = parts[index-1];
-            part.type = partType(part, after);
-            part.position = "HEAD";
-        } else {
-            before = parts[index+1];
-            after = parts[index-1];
-            part.type = partType(before, after);
-            part.position = "MIDDLE";
-        }
-    });
+    return { currentScore, bestScore }
 }
 
 const tick = (gameState: GameState): GameState => {
@@ -74,56 +19,36 @@ const tick = (gameState: GameState): GameState => {
         return gameState;
     }
 
-    const head = snakeHead(snake);
-    const [dr, dc] = directionToOffset(snake.direction);
-    const coor = {
-        rowIndex: head.coordinate.rowIndex + dr,
-        columnIndex: head.coordinate.columnIndex + dc,
-    }
-
-    let { currentScore, bestScore } = scoreInfo;
-    const snakeCoors = snake.body.map((cell) => cell.coordinate);
-    if (!isCoordinateInBoard(coor, rowCount, columnCount) || isCoordinateInCollection(coor, snakeCoors)) {
-        if (!bestScore || bestScore < currentScore) {
-            bestScore = currentScore;
-        }
+    if (hitWall(snake, rowCount, columnCount) || eatSelf(snake)) {
         return {
             ...gameState,
             status: "FINISHED",
-            scoreInfo: {
-                ...scoreInfo,
-                bestScore,
-            }
+            scoreInfo: syncScoreInfo(scoreInfo),
         }
     }
 
-    let body = [...snake.body];
-    let apples = [...gameState.apples];
-    
-    if (isCoordinateInCollection(coor, apples)) {
-        body.push({
-            coordinate: coor,
-        });
-        apples = apples.filter((coordinate) => !sameCoordinate(coor, coordinate))
-        currentScore++;
+    let { apples } = gameState;
+    const nextHead = nextSnakeHead(snake);
+    if (eatApple(snake, apples)) {
+        apples = apples.filter((coordinate) => !sameCoordinate(nextHead, coordinate))
+        if (apples.length === 0) {
+            apples = spawnApples(snake, rowCount, columnCount);
+        }
+        scoreInfo.currentScore++;
     } else {
-        body = snake.body.slice(1);
-        body.push({
-            coordinate: coor,
-        });
+        snake.body = snake.body.slice(1);
     }
-    augmentSnakeBody(body);
+    snake.body.push({
+        coordinate: nextHead,
+    });
+
+    augmentSnakeBody(snake.body);
+
     return {
         ...gameState,
-        snake: {
-            ...snake,
-            body,
-        },
-        apples: spawnApples(apples, snakeCoors, rowCount, columnCount),
-        scoreInfo: {
-            ...scoreInfo,
-            currentScore
-        }
+        snake,
+        apples,
+        scoreInfo,
     };
 }
 
@@ -132,18 +57,10 @@ const changeDirection = (gameState: GameState, payload: { direction: Direction }
     if (["FINISHED", "PAUSED"].includes(status)) {
         return gameState;
     }
-    
-    const head = snakeHead(snake)
+
+    const nextHead = nextSnakeHead(snake, payload.direction);
     const beforeHead = snakeBeforeHead(snake);
-    let { direction } = payload;
-    const [dr, dc] = directionToOffset(direction);
-    const nextCoor = {
-        rowIndex: head.coordinate.rowIndex + dr,
-        columnIndex: head.coordinate.columnIndex + dc,
-    }
-    if (nextCoor.rowIndex === beforeHead.coordinate.rowIndex && nextCoor.columnIndex === beforeHead.coordinate.columnIndex) {
-        direction = snake.direction;
-    }
+    const direction = sameCoordinate(nextHead, beforeHead.coordinate) ? snake.direction : payload.direction
     return {
         ...gameState,
         snake: {

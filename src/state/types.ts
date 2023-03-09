@@ -29,4 +29,4 @@ interface GameState {
     status: GameStatus;
 }
 
- export type { Action, GameState, GameSettings }
+ export type { Action, GameState, GameSettings, ScoreInfo }

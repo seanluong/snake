@@ -19,17 +19,26 @@ const directionToOffset = (direction: Direction): number[] => {
     }
 }
 
-const isCoordinateInBoard = (coordinate: Coordinate, rowCount: number, columnCount: number) => {
+const nextPosition = (coordinate: Coordinate, direction: Direction): Coordinate => {
+    const [dr, dc] = directionToOffset(direction);
+    return {
+        rowIndex: coordinate.rowIndex + dr,
+        columnIndex: coordinate.columnIndex + dc,
+    }
+}
+
+const isInBoard = (coordinate: Coordinate, rowCount: number, columnCount: number) => {
     const { rowIndex, columnIndex } = coordinate;
     return 0 <= rowIndex && rowIndex < rowCount && 0 <= columnIndex && columnIndex < columnCount;
 }
 
-const isCoordinateInCollection = (coordinate: Coordinate, collection: Coordinate[]) => 
+const isInCollection = (coordinate: Coordinate, collection: Coordinate[]) => 
     collection.some((element) => sameCoordinate(coordinate, element))
 
 export {
     directionToOffset,
-    isCoordinateInBoard,
-    isCoordinateInCollection,
-    sameCoordinate
+    isInBoard,
+    isInCollection,
+    nextPosition,
+    sameCoordinate,
 }
