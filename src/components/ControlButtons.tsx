@@ -32,7 +32,10 @@ const ControlButton = (props: { direction: Direction }) => {
         icon = <ArrowCircleRightOutlinedIcon />;
     }
     const disabled = gameState.status === "FINISHED";
-    return <Button variant="contained" disabled={disabled} onClick={() => handleButtonClicked(direction)} >
+    return <Button variant="contained"
+                color="secondary"
+                disabled={disabled}
+                onClick={() => handleButtonClicked(direction)} >
         {icon}
     </Button>
 }
@@ -45,7 +48,7 @@ export const ControlButtons = () => {
             <Stack direction="row">
                 <ControlButton direction={"UP"} />
             </Stack>
-            <Stack direction="row" spacing={2}>
+            <Stack direction="row" spacing={9}>
                 <ControlButton direction={"LEFT"} />
                 <ControlButton direction={"RIGHT"} />
             </Stack>

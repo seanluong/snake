@@ -73,8 +73,8 @@ function App() {
       <Fab aria-label="add"
           size="medium"
           onClick={handleNewGameClicked}
+          color="primary"
           sx={{
-              bgcolor: "pink",
               position: "absolute",
               bottom: "2rem",
               right: "2rem",

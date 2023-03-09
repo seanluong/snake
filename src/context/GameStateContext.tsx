@@ -1,29 +1,29 @@
-import { createContext, PropsWithChildren, useContext, useReducer, useState } from "react";
+import { createContext, PropsWithChildren, useContext, useReducer } from "react";
 import { reducer } from "../reducer";
-import { Action, Coordinate, GameState, Snake, SnakePart } from "../types";
+import { Action, GameState, Snake } from "../types";
 
 interface GameStateContextType {
     gameState: GameState;
     dispatch: (action: Action) => void;
 }
 
-export const SNAKE = {
+const SNAKE: Snake = {
     body: [
         {
             coordinate: { rowIndex: 0, columnIndex: 0 },
             type: "HORIZONTAL",
             position: "TAIL",
-        } as SnakePart,
+        },
         {
             coordinate: { rowIndex: 0, columnIndex: 1 },
             type: "HORIZONTAL",
             position: "HEAD", 
-        } as SnakePart
+        }
     ],
     direction: "RIGHT",
-} as Snake;
+};
 
-export const GAME_STATE = {
+export const GAME_STATE: GameState = {
     snake: SNAKE,
     rowCount: 8,
     columnCount: 8,
@@ -31,12 +31,12 @@ export const GAME_STATE = {
     apples: [{
         rowIndex: 4,
         columnIndex: 4,
-    }] as Coordinate[],
+    }],
     scoreInfo: {
         currentScore: 0,
     },
     status: "NEW",
-} as GameState;
+};
 
 const GameStateContext = createContext<GameStateContextType>({
     gameState: GAME_STATE,
