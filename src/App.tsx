@@ -36,10 +36,6 @@ function App() {
   }, [documentRef, status]);
 
   const handleKeyDowned = (event: KeyboardEvent) => {
-    if (status === "FINISHED") {
-      return;
-    }
-
     switch (event.key) {
       case "ArrowUp":
       case "ArrowDown":
@@ -53,6 +49,10 @@ function App() {
           }
         })
         return;
+      case "n":
+        dispatch({
+          type: "newGame"
+        });
       default:
         break;
     }
