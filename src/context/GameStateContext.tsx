@@ -1,51 +1,20 @@
 import { createContext, PropsWithChildren, useContext, useReducer } from "react";
 import { reducer } from "../reducer";
-import { Action, GameState, Snake } from "../types";
+import { newGameState } from "../state/initializer";
+import { Action,  GameState } from "../state/types";
 
 interface GameStateContextType {
     gameState: GameState;
     dispatch: (action: Action) => void;
 }
 
-const SNAKE: Snake = {
-    body: [
-        {
-            coordinate: { rowIndex: 0, columnIndex: 0 },
-            type: "HORIZONTAL",
-            position: "TAIL",
-        },
-        {
-            coordinate: { rowIndex: 0, columnIndex: 1 },
-            type: "HORIZONTAL",
-            position: "HEAD", 
-        }
-    ],
-    direction: "RIGHT",
-};
-
-export const GAME_STATE: GameState = {
-    snake: SNAKE,
-    rowCount: 8,
-    columnCount: 8,
-    tickDuraction: 150,
-    apples: [{
-        rowIndex: 4,
-        columnIndex: 4,
-    }],
-    scoreInfo: {
-        currentScore: 0,
-    },
-    status: "NEW",
-};
-
 const GameStateContext = createContext<GameStateContextType>({
-    gameState: GAME_STATE,
+    gameState: newGameState(),
     dispatch: () => {},
 })
 
-
-export const GameStateProvider = ({ children }: PropsWithChildren) => {
-    const [gameState, dispatch] = useReducer(reducer, GAME_STATE);
+const GameStateProvider = ({ children }: PropsWithChildren) => {
+    const [gameState, dispatch] = useReducer(reducer, newGameState());
     return (
         <GameStateContext.Provider value={{
             gameState,
@@ -56,4 +25,6 @@ export const GameStateProvider = ({ children }: PropsWithChildren) => {
     );
 }
 
-export const useGameStateContext = () => useContext(GameStateContext);
+const useGameStateContext = () => useContext(GameStateContext);
+
+export { useGameStateContext, GameStateProvider };
