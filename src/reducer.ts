@@ -91,15 +91,17 @@ const augmentSnakeBody = (parts: SnakePart[]) => {
 }
 
 const tick = (gameState: GameState): GameState => {
-    const { snake, rowCount, columnCount } = gameState;
+    const { snake, rowCount, columnCount, scoreInfo } = gameState;
     const head = snakeHead(snake);
     const [dr, dc] = directionToOffset(snake.direction);
     const coor = {
         rowIndex: head.coordinate.rowIndex + dr,
         columnIndex: head.coordinate.columnIndex + dc,
     }
+
     let body = [...snake.body];
     let apples = [...gameState.apples];
+    let { currentScore } = scoreInfo;
     const snakeCoors = snake.body.map((cell) => cell.coordinate);
     if (isCoordinateInBoard(coor, rowCount, columnCount) && !isCoordinateInCollection(coor, snakeCoors)) {
         if (isCoordinateInCollection(coor, apples)) {
@@ -107,6 +109,7 @@ const tick = (gameState: GameState): GameState => {
                 coordinate: coor,
             });
             apples = apples.filter((coordinate) => !sameCoordinate(coor, coordinate))
+            currentScore++;
         } else {
             body = snake.body.slice(1);
             body.push({
@@ -124,6 +127,10 @@ const tick = (gameState: GameState): GameState => {
             body,
         },
         apples: spawnApples(apples, snakeCoors, rowCount, columnCount),
+        scoreInfo: {
+            ...scoreInfo,
+            currentScore
+        }
     };
 }
 

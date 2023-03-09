@@ -18,12 +18,18 @@ export interface Snake {
     direction: Direction;
 }
 
+export interface ScoreInfo {
+    currentScore: number;
+    bestScore?: number;
+}
+
 export interface GameState {
     snake: Snake;
     rowCount: number;
     columnCount: number;
     tickDuraction: number;
     apples: Coordinate[];
+    scoreInfo: ScoreInfo;
 }
 
 export type Action =

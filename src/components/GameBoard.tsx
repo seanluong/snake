@@ -8,11 +8,6 @@ import CircleIcon from '@mui/icons-material/Circle';
 import RectangleIcon from '@mui/icons-material/Rectangle';
 import ModeNightIcon from '@mui/icons-material/ModeNight';
 
-export interface GameBoardProps {
-    rowCount: number;
-    columnCount: number;
-}
-
 interface RowProps {
     rowIndex: number;
     values: number[];
@@ -160,8 +155,10 @@ const Row = ({ values, rowIndex }: RowProps) => {
     );
 }
 
-export const GameBoard = (props: GameBoardProps) => {
-    const { rowCount, columnCount } = props;
+export const GameBoard = () => {
+    const { gameState } = useGameStateContext();
+    const { rowCount, columnCount } = gameState;
+    
     const cells = times(rowCount, () => {
         return times(columnCount, () => 0);
     });

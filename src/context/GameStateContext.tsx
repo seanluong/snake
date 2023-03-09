@@ -14,7 +14,7 @@ const SNAKE = {
             type: "HORIZONTAL"
         } as SnakePart,
         {
-            coordinate: { rowIndex: 0, columnIndex: 1},
+            coordinate: { rowIndex: 0, columnIndex: 1 },
             type: "HORIZONTAL" 
         } as SnakePart
     ],
@@ -23,10 +23,13 @@ const SNAKE = {
 
 const GAME_STATE = {
     snake: SNAKE,
-    rowCount: 20,
-    columnCount: 20,
+    rowCount: 8,
+    columnCount: 8,
     tickDuraction: 150,
     apples: [] as Coordinate[],
+    scoreInfo: {
+        currentScore: 0,
+    },
   } as GameState;
 
 const GameStateContext = createContext<GameStateContextType>({

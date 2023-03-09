@@ -1,12 +1,13 @@
 import { Stack } from '@mui/system'
 import { useEffect, useRef } from 'react';
 import { GameBoard } from './components/GameBoard'
+import { ScordCard } from './components/ScordCard';
 import { useGameStateContext } from './context/GameStateContext';
 import { Direction } from './types';
 
 function App() {
   const { gameState, dispatch } = useGameStateContext();
-  const { rowCount, columnCount, tickDuraction } = gameState;
+  const { tickDuraction } = gameState;
   const documentRef = useRef<Document>(document);
 
   useEffect(() => {
@@ -50,10 +51,11 @@ function App() {
   }, [documentRef])
 
   return (
-    <Stack sx={{
-      mt: "5rem"
+    <Stack spacing={2} sx={{
+      mt: "5rem",
     }}>
-      <GameBoard rowCount={rowCount} columnCount={columnCount} />
+      <ScordCard />
+      <GameBoard />
     </Stack>
   )
 }
