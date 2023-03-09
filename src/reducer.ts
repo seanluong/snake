@@ -1,6 +1,6 @@
-import { SNAKE } from "./context/GameStateContext";
+import { GAME_STATE } from "./context/GameStateContext";
 import { Action, Coordinate, Direction, GameState, MovementType, Snake, SnakePart } from "./types";
-
+import cloneDeep from 'lodash/cloneDeep';
 
 const directionToOffset = (direction: Direction): number[] => {
     switch (direction) {
@@ -63,7 +63,7 @@ const partType = (before: SnakePart, after: SnakePart): MovementType => {
     } else if (rowOffset * columnOffset > 0) {
         return "TOP_LEFT_BOTTOM_RIGHT";
     } else {
-        // rowOffset * columnOffset <>> 0
+        // rowOffset * columnOffset < 0
         return "BOTTOM_LEFT_TOP_RIGHT";
     }
 }
@@ -170,32 +170,30 @@ const changeDirection = (gameState: GameState, payload: { direction: Direction }
         snake: {
             ...snake,
             direction,
-        }
-    };
-}
-
-const newGame = (gameState: GameState): GameState => {
-    return {
-        ...gameState,
-        snake: SNAKE,
-        apples: [] as Coordinate[],
-        scoreInfo: {
-            ...gameState.scoreInfo,
-            currentScore: 0,
         },
         status: "ONGOING",
     };
 }
 
+const newGame = (gameState: GameState): GameState => {
+    return {
+        ...GAME_STATE,
+        scoreInfo: {
+            ...gameState.scoreInfo,
+            currentScore: 0,
+        },
+    };
+}
+
 export const reducer = (gameState: GameState, action: Action): GameState => {
-    const { snake } = gameState;
+    const state = cloneDeep(gameState);
     switch (action.type) {
         case "tick":
-            return tick(gameState);
+            return tick(state);
         case "changeDirection":
-            return changeDirection(gameState, action.payload);
+            return changeDirection(state, action.payload);
         case "newGame":
-            return newGame(gameState);
+            return newGame(state);
         default:
             break;
     }

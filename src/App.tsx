@@ -12,15 +12,33 @@ function App() {
   const { tickDuraction, status } = gameState;
   const documentRef = useRef<Document>(document);
 
+  let interval: number;
   useEffect(() => {
-    const id = setInterval(() => {
-      dispatch({
-        type: "tick"
-      });
-    }, tickDuraction);
+    if (status === "ONGOING" && !interval) {
+      interval = setInterval(() => {
+        dispatch({
+          type: "tick"
+        });
+      }, tickDuraction);
+    }
 
-    return () => clearInterval(id)
-  }, []);
+    return () => clearInterval(interval);
+  }, [status]);
+
+  useEffect(() => {
+    if (documentRef.current) {
+      const document = documentRef.current;
+      if (status === "FINISHED") {
+        document.removeEventListener('keydown', handleKeyDowned)
+        return;
+      }
+
+      document.addEventListener('keydown', handleKeyDowned);
+      return () => {
+        document.removeEventListener('keydown', handleKeyDowned)
+      }
+    }
+  }, [documentRef, status]);
 
   const handleKeyDowned = (event: KeyboardEvent) => {
     if (status === "FINISHED") {
@@ -49,21 +67,6 @@ function App() {
       type: "newGame",
     });
   }
-
-  useEffect(() => {
-    if (documentRef.current) {
-      const document = documentRef.current;
-      if (status === "FINISHED") {
-        document.removeEventListener('keydown', handleKeyDowned)
-        return;
-      }
-
-      document.addEventListener('keydown', handleKeyDowned);
-      return () => {
-        document.removeEventListener('keydown', handleKeyDowned)
-      }
-    }
-  }, [documentRef, status])
 
   return (
     <Stack spacing={2} sx={{

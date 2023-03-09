@@ -11,26 +11,31 @@ export const SNAKE = {
     body: [
         {
             coordinate: { rowIndex: 0, columnIndex: 0 },
-            type: "HORIZONTAL"
+            type: "HORIZONTAL",
+            position: "TAIL",
         } as SnakePart,
         {
             coordinate: { rowIndex: 0, columnIndex: 1 },
-            type: "HORIZONTAL" 
+            type: "HORIZONTAL",
+            position: "HEAD", 
         } as SnakePart
     ],
     direction: "RIGHT",
 } as Snake;
 
-const GAME_STATE = {
+export const GAME_STATE = {
     snake: SNAKE,
     rowCount: 8,
     columnCount: 8,
     tickDuraction: 150,
-    apples: [] as Coordinate[],
+    apples: [{
+        rowIndex: 4,
+        columnIndex: 4,
+    }] as Coordinate[],
     scoreInfo: {
         currentScore: 0,
     },
-    status: "ONGOING",
+    status: "NEW",
 } as GameState;
 
 const GameStateContext = createContext<GameStateContextType>({
