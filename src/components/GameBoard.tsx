@@ -35,9 +35,9 @@ const Row = ({ values, rowIndex }: RowProps) => {
             return "red";
         }
         if (isDarkCell(rowIndex, columnIndex)) {
-            return "yellow";
+            return "lightblue";
         }
-        return "blue";
+        return "rgba(0, 0, 0, 0.15)";
     }
 
     return (
@@ -67,7 +67,9 @@ export const GameBoard = (props: GameBoardProps) => {
         return times(columnCount, () => 0);
     });
     return (
-        <Stack direction="column">
+        <Stack direction="column" sx={{
+            border: "1px solid white"
+        }}>
         {
             cells.map((row, rowIndex) => {
                 return <Row key={`row-${rowIndex}`} rowIndex={rowIndex} values={row} />;

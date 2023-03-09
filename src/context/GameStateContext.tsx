@@ -17,9 +17,9 @@ const SNAKE = {
 
 const GAME_STATE = {
     snake: SNAKE,
-    rowCount: 10,
-    columnCount: 10,
-    tickDuraction: 250,
+    rowCount: 20,
+    columnCount: 20,
+    tickDuraction: 150,
     apples: [] as Coordinate[],
   } as GameState;
 
