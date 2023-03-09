@@ -6,6 +6,7 @@ import { ScordCard } from './components/ScordCard';
 import { useGameStateContext } from './context/GameStateContext';
 import AddIcon from '@mui/icons-material/Add';
 import { Direction } from './types';
+import { ControlButtons } from './components/ControlButtons';
 
 function App() {
   const { gameState, dispatch } = useGameStateContext();
@@ -80,6 +81,7 @@ function App() {
           }}>
           <AddIcon />
       </Fab>
+      <ControlButtons />
     </Stack>
   )
 }
