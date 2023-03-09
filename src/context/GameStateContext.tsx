@@ -30,6 +30,7 @@ const GAME_STATE = {
     scoreInfo: {
         currentScore: 0,
     },
+    status: "ONGOING",
   } as GameState;
 
 const GameStateContext = createContext<GameStateContextType>({

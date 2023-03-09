@@ -99,27 +99,38 @@ const tick = (gameState: GameState): GameState => {
         columnIndex: head.coordinate.columnIndex + dc,
     }
 
-    let body = [...snake.body];
-    let apples = [...gameState.apples];
-    let { currentScore } = scoreInfo;
+    let { currentScore, bestScore } = scoreInfo;
     const snakeCoors = snake.body.map((cell) => cell.coordinate);
-    if (isCoordinateInBoard(coor, rowCount, columnCount) && !isCoordinateInCollection(coor, snakeCoors)) {
-        if (isCoordinateInCollection(coor, apples)) {
-            body.push({
-                coordinate: coor,
-            });
-            apples = apples.filter((coordinate) => !sameCoordinate(coor, coordinate))
-            currentScore++;
-        } else {
-            body = snake.body.slice(1);
-            body.push({
-                coordinate: coor,
-            });
+    if (!isCoordinateInBoard(coor, rowCount, columnCount) || isCoordinateInCollection(coor, snakeCoors)) {
+        if (!bestScore || bestScore < currentScore) {
+            bestScore = currentScore;
+        }
+        return {
+            ...gameState,
+            status: "FINISHED",
+            scoreInfo: {
+                ...scoreInfo,
+                bestScore,
+            }
         }
     }
 
+    let body = [...snake.body];
+    let apples = [...gameState.apples];
+    
+    if (isCoordinateInCollection(coor, apples)) {
+        body.push({
+            coordinate: coor,
+        });
+        apples = apples.filter((coordinate) => !sameCoordinate(coor, coordinate))
+        currentScore++;
+    } else {
+        body = snake.body.slice(1);
+        body.push({
+            coordinate: coor,
+        });
+    }
     augmentSnakeBody(body);
-
     return {
         ...gameState,
         snake: {

@@ -7,7 +7,7 @@ import { Direction } from './types';
 
 function App() {
   const { gameState, dispatch } = useGameStateContext();
-  const { tickDuraction } = gameState;
+  const { tickDuraction, status } = gameState;
   const documentRef = useRef<Document>(document);
 
   useEffect(() => {
@@ -21,6 +21,10 @@ function App() {
   }, []);
 
   const handleKeyDowned = (event: KeyboardEvent) => {
+    if (status === "FINISHED") {
+      return;
+    }
+
     switch (event.key) {
       case "ArrowUp":
       case "ArrowDown":

@@ -2,6 +2,8 @@ export type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
 export type MovementType = "VERTICAL" | "HORIZONTAL" | "TOP_LEFT_BOTTOM_RIGHT" | "BOTTOM_LEFT_TOP_RIGHT";
 
+export type GameStatus = "ONGOING" | "FINISHED";
+
 export interface SnakePart {
     coordinate: Coordinate;
     type?: MovementType;
@@ -30,6 +32,7 @@ export interface GameState {
     tickDuraction: number;
     apples: Coordinate[];
     scoreInfo: ScoreInfo;
+    status: GameStatus;
 }
 
 export type Action =
