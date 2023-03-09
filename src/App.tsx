@@ -8,6 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { Direction } from './types';
 import { ControlButtons } from './components/ControlButtons';
 import { HelpCard } from './components/HelpCard';
+import { isBrowser, isMobile } from 'react-device-detect';
 
 function App() {
   const { gameState, dispatch } = useGameStateContext();
@@ -86,8 +87,8 @@ function App() {
           }}>
           <AddIcon />
       </Fab>
-      <ControlButtons />
-      <HelpCard />
+      { isMobile && <ControlButtons /> }
+      { isBrowser && <HelpCard /> }
     </Stack>
   )
 }
