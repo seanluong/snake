@@ -3,6 +3,9 @@ import { Stack } from '@mui/system';
 import times from 'lodash/times';
 import { useGameStateContext } from '../context/GameStateContext';
 import { Coordinate, GameState, Snake } from '../types';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import CircleIcon from '@mui/icons-material/Circle';
+import Brightness2Icon from '@mui/icons-material/Brightness2';
 
 export interface GameBoardProps {
     rowCount: number;
@@ -14,6 +17,13 @@ interface RowProps {
     values: number[];
 }
 
+interface SnakeCellProps {
+    // rowIndex: number;
+    // columnIndex: number;
+    // position: "HEAD" | "TAIL" | "BODY";
+    // type: string;
+}
+
 const isDarkCell = (rowIndex: number, columnIndex: number) => (rowIndex + columnIndex) % 2 === 0;
 
 const isSnakeBody = (rowIndex: number, columnIndex: number, snake: Snake) =>
@@ -22,18 +32,19 @@ const isSnakeBody = (rowIndex: number, columnIndex: number, snake: Snake) =>
 const isApple = (rowIndex: number, columnIndex: number, apples: Coordinate[]) =>
     apples.some((coordinate) => coordinate.rowIndex === rowIndex && coordinate.columnIndex === columnIndex);
 
+const SnakeCell = (props: SnakeCellProps) => {
+
+    return <CircleIcon sx={{
+        color: "purple"
+    }}/>
+}
+
 const Row = ({ values, rowIndex }: RowProps) => {
     const { gameState } = useGameStateContext();
 
     const { snake, apples } = gameState;
 
     const bgcolor = (gameState: GameState, rowIndex: number, columnIndex: number) => {
-        if (isSnakeBody(rowIndex, columnIndex, snake)) {
-            return "purple";
-        }
-        if (isApple(rowIndex, columnIndex, apples)) {
-            return "red";
-        }
         if (isDarkCell(rowIndex, columnIndex)) {
             return "lightblue";
         }
@@ -50,10 +61,23 @@ const Row = ({ values, rowIndex }: RowProps) => {
                 return <Paper key={`column-${columnIndex}`}
                             elevation={2}
                             sx={{
+                                flex: "1 1 2rem",
                                 bgcolor: bgcolor(gameState, rowIndex, columnIndex),
                                 borderRadius: 0,
-                                width: "2rem",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
                             }}>
+                    { 
+                        isSnakeBody(rowIndex, columnIndex, snake) &&
+                        <SnakeCell />
+                    }
+                    {
+                        isApple(rowIndex, columnIndex, apples) &&
+                        <FavoriteIcon sx={{
+                            color: "purple"
+                        }}/>
+                    }
                 </Paper>
             })
         }
@@ -68,7 +92,8 @@ export const GameBoard = (props: GameBoardProps) => {
     });
     return (
         <Stack direction="column" sx={{
-            border: "1px solid white"
+            border: "1px solid white",
+            width: `calc(2rem * ${columnCount})`
         }}>
         {
             cells.map((row, rowIndex) => {
