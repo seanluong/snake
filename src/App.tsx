@@ -15,7 +15,7 @@ function App() {
   const { tickDuraction, status } = gameState;
   const documentRef = useRef<Document>(document);
 
-  let interval: number | undefined;
+  let interval: string | number | NodeJS.Timeout | undefined;
   useEffect(() => {
     if (status === "ONGOING" && !interval) {
       interval = setInterval(() => {
