@@ -1,7 +1,7 @@
 import { Fab } from '@mui/material';
 import { Stack } from '@mui/system'
 import { useEffect, useRef } from 'react';
-import { GameBoard } from './components/GameBoard'
+import { Board } from './components/Board'
 import { ScoreCard } from './components/ScoreCard';
 import { useGameStateContext } from './context/GameStateContext';
 import AddIcon from '@mui/icons-material/Add';
@@ -75,7 +75,7 @@ function App() {
       mt: "5rem",
     }}>
       <ScoreCard />
-      <GameBoard />
+      <Board />
       <Fab aria-label="add"
           size="medium"
           onClick={handleNewGameClicked}
