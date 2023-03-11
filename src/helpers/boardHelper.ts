@@ -36,7 +36,6 @@ const isInCollection = (coordinate: Coordinate, collection: Coordinate[]) =>
     collection.some((element) => sameCoordinate(coordinate, element))
 
 export {
-    directionToOffset,
     isInBoard,
     isInCollection,
     nextPosition,
