@@ -2,7 +2,7 @@ import { Fab } from '@mui/material';
 import { Stack } from '@mui/system'
 import { useEffect, useRef } from 'react';
 import { GameBoard } from './components/GameBoard'
-import { ScordCard } from './components/ScordCard';
+import { ScoreCard } from './components/ScoreCard';
 import { useGameStateContext } from './context/GameStateContext';
 import AddIcon from '@mui/icons-material/Add';
 import { Direction } from './types';
@@ -74,7 +74,7 @@ function App() {
     <Stack spacing={2} sx={{
       mt: "5rem",
     }}>
-      <ScordCard />
+      <ScoreCard />
       <GameBoard />
       <Fab aria-label="add"
           size="medium"

@@ -2,7 +2,7 @@ import { Stack, Typography } from "@mui/material";
 import { useGameStateContext } from "../context/GameStateContext";
 
 
-export const ScordCard = () => {
+export const ScoreCard = () => {
     const { gameState } = useGameStateContext();
     const { currentScore, bestScore } = gameState.scoreInfo;
 
