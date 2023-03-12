@@ -4,10 +4,12 @@ import { GameSettings, GameState } from "./types";
 const INITIAL_ROW_COUNT = 7;
 const INITIAL_COLUMN_COUNT = 7;
 
+const MAX_BOARD_SIZE = 10;
+
 const GAME_SETTINGS: GameSettings = {
     rowCount: INITIAL_ROW_COUNT,
     columnCount: INITIAL_COLUMN_COUNT,
-    tickDuration: 500,
+    tickDuration: 200,
 }
 
 const randomCoordinate = (rowStart: number, rowEnd: number, columnStart: number, columnEnd: number): Coordinate => {
@@ -53,5 +55,6 @@ const newGameState = (settings: GameSettings = GAME_SETTINGS): GameState => {
 
 export {
     generateSnake,
-    newGameState
+    newGameState,
+    MAX_BOARD_SIZE
 };

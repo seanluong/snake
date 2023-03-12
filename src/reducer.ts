@@ -1,8 +1,8 @@
 import { Direction } from "./types";
 import cloneDeep from 'lodash/cloneDeep';
-import { Action, GameState, ScoreInfo } from "./state/types";
+import { Action, GameSettings, GameState, ScoreInfo } from "./state/types";
 import { sameCoordinate } from "./helpers/boardHelper";
-import { newGameState } from "./state/initializer";
+import { MAX_BOARD_SIZE, newGameState } from "./state/initializer";
 import { augmentSnakeBody, eatApple, eatSelf, hitWall, nextSnakeHead, snakeBeforeHead, spawnApples } from "./helpers/snakeHelpers";
 
 const syncScoreInfo = (scoreInfo: ScoreInfo): ScoreInfo => {
@@ -13,8 +13,21 @@ const syncScoreInfo = (scoreInfo: ScoreInfo): ScoreInfo => {
     return { currentScore, bestScore }
 }
 
+const nextGameSettings = (settings: GameSettings): GameSettings => {
+    let { rowCount, columnCount } = settings;
+    if (rowCount < MAX_BOARD_SIZE || columnCount < MAX_BOARD_SIZE) {
+        if (rowCount < columnCount) {
+            rowCount++;
+        }
+        else {
+            columnCount++;
+        }
+    }
+    return { ...settings, rowCount, columnCount }
+}
+
 const tick = (gameState: GameState): GameState => {
-    const { snake, rowCount, columnCount, scoreInfo, status } = gameState;
+    const { snake, rowCount, columnCount, tickDuration, scoreInfo, status } = gameState;
     if (["FINISHED", "PAUSED"].includes(status)) {
         return gameState;
     }
@@ -28,6 +41,7 @@ const tick = (gameState: GameState): GameState => {
     }
 
     let { apples } = gameState;
+    let gameSettings: GameSettings = { rowCount, columnCount, tickDuration };
     const nextHead = nextSnakeHead(snake);
     if (eatApple(snake, apples)) {
         apples = apples.filter((coordinate) => !sameCoordinate(nextHead, coordinate))
@@ -35,6 +49,9 @@ const tick = (gameState: GameState): GameState => {
             apples = spawnApples(snake, rowCount, columnCount);
         }
         scoreInfo.currentScore++;
+        if (scoreInfo.currentScore % 2 === 0) {
+            gameSettings = nextGameSettings(gameSettings);
+        }
     } else {
         snake.body = snake.body.slice(1);
     }
@@ -46,6 +63,7 @@ const tick = (gameState: GameState): GameState => {
 
     return {
         ...gameState,
+        ...gameSettings,
         snake,
         apples,
         scoreInfo,
