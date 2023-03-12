@@ -3,7 +3,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { Action, GameSettings, GameState, ScoreInfo } from "./state/types";
 import { sameCoordinate } from "./helpers/boardHelper";
 import { MAX_BOARD_SIZE, newGameState } from "./state/initializer";
-import { augmentSnakeBody, eatApple, eatSelf, hitWall, nextSnakeHead, snakeBeforeHead, spawnApples } from "./helpers/snakeHelpers";
+import { eatApple, eatSelf, hitWall, nextSnakeHead, snakeBeforeHead, snakeForward, snakeGrow, spawnApples } from "./helpers/snakeHelpers";
 
 const syncScoreInfo = (scoreInfo: ScoreInfo): ScoreInfo => {
     let { currentScore, bestScore } = scoreInfo;
@@ -42,25 +42,19 @@ const tick = (gameState: GameState): GameState => {
 
     let { apples } = gameState;
     let gameSettings: GameSettings = { rowCount, columnCount, tickDuration };
-    const nextHead = nextSnakeHead(snake);
     if (eatApple(snake, apples)) {
-        apples = apples.filter((coordinate) => !sameCoordinate(nextHead, coordinate))
-        if (apples.length === 0) {
-            apples = spawnApples(snake, rowCount, columnCount);
-        }
         scoreInfo.currentScore++;
         if (scoreInfo.currentScore % 2 === 0) {
             gameSettings = nextGameSettings(gameSettings);
         }
+        apples = snakeGrow(snake, apples);
     } else {
-        snake.body = snake.body.slice(1);
+        snakeForward(snake);
     }
-    snake.body.push({
-        coordinate: nextHead,
-    });
 
-    augmentSnakeBody(snake.body);
-
+    if (apples.length === 0) {
+        apples = spawnApples(snake, rowCount, columnCount);
+    }
     return {
         ...gameState,
         ...gameSettings,

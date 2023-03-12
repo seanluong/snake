@@ -1,5 +1,5 @@
 import { Coordinate, Direction, MovementType, Snake, SnakePart } from "../types";
-import { isInBoard, isInCollection, nextPosition } from "./boardHelper";
+import { isInBoard, isInCollection, nextPosition, sameCoordinate } from "./boardHelper";
 
 
 const snakeHead = ({ body }: Snake) => body[body.length-1];
@@ -27,6 +27,24 @@ const eatSelf = (snake: Snake) => {
 const eatApple = (snake: Snake, apples: Coordinate[]) => {
     const nextHead = nextSnakeHead(snake);
     return isInCollection(nextHead, apples);
+}
+
+const snakeForward = (snake: Snake) => {
+    snake.body = snake.body.slice(1);
+    const nextHead = nextSnakeHead(snake);
+    snake.body.push({
+        coordinate: nextHead,
+    });
+    augmentSnakeBody(snake.body);
+}
+
+const snakeGrow = (snake: Snake, apples: Coordinate[]): Coordinate[] => {
+    const nextHead = nextSnakeHead(snake);
+    snake.body.push({
+        coordinate: nextHead,
+    });
+    augmentSnakeBody(snake.body);
+    return apples.filter((coordinate) => !sameCoordinate(nextHead, coordinate));
 }
 
 const spawnApples = (snake: Snake, rowCount: number, columnCount: number): Coordinate[] => {
@@ -83,11 +101,12 @@ const augmentSnakeBody = (parts: SnakePart[]) => {
 }
 
 export {
-    augmentSnakeBody,
     eatApple,
     eatSelf,
     hitWall,
     nextSnakeHead,
     snakeBeforeHead,
+    snakeForward,
+    snakeGrow,
     spawnApples
 }
