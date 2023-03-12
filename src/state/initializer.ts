@@ -1,3 +1,4 @@
+import { spawnApples } from "../helpers/snakeHelpers";
 import { Coordinate, Snake } from "../types";
 import { GameSettings, GameState } from "./types";
 
@@ -36,15 +37,13 @@ const generateSnake = (rowCount: number, columnCount: number): Snake => {
 
 const newGameState = (settings: GameSettings = GAME_SETTINGS): GameState => {
     const { rowCount, columnCount, tickDuration } = settings;
+    const snake = generateSnake(rowCount, columnCount);
     const state: GameState = {
-        snake: generateSnake(rowCount, columnCount),
+        snake,
         rowCount,
         columnCount,
         tickDuration,
-        apples: [{
-            rowIndex: Math.floor(rowCount / 2),
-            columnIndex: Math.floor(columnCount / 2),
-        }],
+        apples: spawnApples(snake, rowCount, columnCount),
         scoreInfo: {
             currentScore: 0,
         },
