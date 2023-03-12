@@ -48,7 +48,7 @@ export const Cell = ({ rowIndex, columnIndex }: CellProps) => {
             {
                 isApple(rowIndex, columnIndex, apples) &&
                 <FavoriteIcon sx={{
-                    color: "red",
+                    color: "blue",
                     width: "60%",
                     height: "60%",
                 }}/>

@@ -4,7 +4,8 @@ import KeyboardIcon from '@mui/icons-material/Keyboard';
 const HelpCard = () => {
     return (
         <Paper sx={{
-                bgcolor: "rgb(100, 220, 250)"
+                bgcolor: "rgb(50, 50, 255)",
+                color: "white",
             }}>
             <List dense={true}>
                 <ListItem>

@@ -12,7 +12,7 @@ import { isBrowser, isMobile } from 'react-device-detect';
 
 function App() {
   const { gameState, dispatch } = useGameStateContext();
-  const { tickDuraction, status } = gameState;
+  const { tickDuration, status } = gameState;
   const documentRef = useRef<Document>(document);
 
   let interval: string | number | NodeJS.Timeout | undefined;
@@ -22,7 +22,7 @@ function App() {
         dispatch({
           type: "tick"
         });
-      }, tickDuraction);
+      }, tickDuration);
     }
 
     return () => clearInterval(interval);

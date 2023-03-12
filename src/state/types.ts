@@ -16,14 +16,14 @@ interface ScoreInfo {
 interface GameSettings {
     rowCount: number;
     columnCount: number;
-    tickDuraction: number;
+    tickDuration: number;
 }
 
 interface GameState {
     snake: Snake;
     rowCount: number;
     columnCount: number;
-    tickDuraction: number;
+    tickDuration: number;
     apples: Coordinate[];
     scoreInfo: ScoreInfo;
     status: GameStatus;

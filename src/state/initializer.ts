@@ -1,10 +1,13 @@
 import { Coordinate, Snake } from "../types";
 import { GameSettings, GameState } from "./types";
 
+const INITIAL_ROW_COUNT = 7;
+const INITIAL_COLUMN_COUNT = 7;
+
 const GAME_SETTINGS: GameSettings = {
-    rowCount: 8,
-    columnCount: 8,
-    tickDuraction: 150,
+    rowCount: INITIAL_ROW_COUNT,
+    columnCount: INITIAL_COLUMN_COUNT,
+    tickDuration: 500,
 }
 
 const randomCoordinate = (rowStart: number, rowEnd: number, columnStart: number, columnEnd: number): Coordinate => {
@@ -30,12 +33,12 @@ const generateSnake = (rowCount: number, columnCount: number): Snake => {
 }
 
 const newGameState = (settings: GameSettings = GAME_SETTINGS): GameState => {
-    const { rowCount, columnCount, tickDuraction } = settings;
+    const { rowCount, columnCount, tickDuration } = settings;
     const state: GameState = {
         snake: generateSnake(rowCount, columnCount),
         rowCount,
         columnCount,
-        tickDuraction,
+        tickDuration,
         apples: [{
             rowIndex: Math.floor(rowCount / 2),
             columnIndex: Math.floor(columnCount / 2),
