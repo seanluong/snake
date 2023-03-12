@@ -17,7 +17,10 @@ function App() {
 
   let interval: string | number | NodeJS.Timeout | undefined;
   useEffect(() => {
-    if (status === "ONGOING" && !interval) {
+    if (status === "ONGOING" && tickDuration > 0) {
+      if (interval) {
+        clearInterval(interval);
+      }
       interval = setInterval(() => {
         dispatch({
           type: "tick"
@@ -26,7 +29,7 @@ function App() {
     }
 
     return () => clearInterval(interval);
-  }, [status]);
+  }, [status, tickDuration]);
 
   useEffect(() => {
     if (documentRef.current) {

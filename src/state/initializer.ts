@@ -9,7 +9,7 @@ const MAX_BOARD_SIZE = 10;
 const GAME_SETTINGS: GameSettings = {
     rowCount: INITIAL_ROW_COUNT,
     columnCount: INITIAL_COLUMN_COUNT,
-    tickDuration: 200,
+    tickDuration: 300,
 }
 
 const randomCoordinate = (rowStart: number, rowEnd: number, columnStart: number, columnEnd: number): Coordinate => {

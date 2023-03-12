@@ -14,7 +14,7 @@ const syncScoreInfo = (scoreInfo: ScoreInfo): ScoreInfo => {
 }
 
 const nextGameSettings = (settings: GameSettings): GameSettings => {
-    let { rowCount, columnCount } = settings;
+    let { rowCount, columnCount, tickDuration } = settings;
     if (rowCount < MAX_BOARD_SIZE || columnCount < MAX_BOARD_SIZE) {
         if (rowCount < columnCount) {
             rowCount++;
@@ -23,7 +23,10 @@ const nextGameSettings = (settings: GameSettings): GameSettings => {
             columnCount++;
         }
     }
-    return { ...settings, rowCount, columnCount }
+    if (tickDuration > 100) {
+        tickDuration -= 25;
+    }
+    return { tickDuration, rowCount, columnCount }
 }
 
 const tick = (gameState: GameState): GameState => {
