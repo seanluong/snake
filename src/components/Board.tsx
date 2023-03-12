@@ -14,8 +14,6 @@ export const Board = () => {
     });
     return (
         <Stack direction="column" sx={{
-            bgcolor: "darkcyan",
-            border: "1px solid white",
             width: `calc(${cellSize} * ${columnCount})`
         }}>
         {
