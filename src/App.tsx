@@ -39,7 +39,7 @@ function App() {
         document.removeEventListener('keydown', handleKeyDowned)
       }
     }
-  }, [documentRef, status]);
+  }, [documentRef]);
 
   const handleKeyDowned = (event: KeyboardEvent) => {
     switch (event.code) {
